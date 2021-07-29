@@ -10,10 +10,10 @@ RSpec.describe 'Authentication API', type: :request do
         }
     end
 
-    describe 'POST /signup' do
+    describe 'POST users/signup' do
         context "when signup is successfully" do
         let(:user) { build(:user) }
-        before { post '/signup', params: valid_credentials.to_json, headers: headers }
+        before { post '/users/sign_up', params: valid_credentials.to_json, headers: headers }
 
             it 'returns status code 201' do
                 expect(response).to have_http_status(201)
@@ -21,9 +21,8 @@ RSpec.describe 'Authentication API', type: :request do
 
             it 'returns token' do
                 expect(json['first_name']).not_to be_empty
-                expect(json['auth_token']).not_to be_nil
-                expect(json['message']).to match(/Account created successfully/)
-                expect(json.size).to eq(3)
+                expect(json['access_token']).not_to be_nil
+                expect(json.size).to eq(14)
             end
         end
     end

@@ -1,43 +1,71 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user_by_token, except: [:sign_in]
-  skip_before_action :authenticate_user_by_token, only: [:sign_up]
-
+  attr_reader :current_user
+  before_action :authenticate_user_by_token, except: [:sign_in, :sign_up]
+  
   def sign_in
-    set_token
-    @user = User.where(user: user_params[:email]).or(User.where(email: user_params[:email])).first
+    get_token
+    @user = User.find_by_email(user_params[:email])
     if @token
-      @user.update_columns access_token: @token
-      render json: set_response(200), status: 200
+      render json: @user, status: 200
     else
-      render json: { status: 401, message: 'Access Denied' }, status: 401
+      render json: { status: 401, errors: [ { details: 'Invalid user' } ] }, status: 401
     end
   end
 
   def sign_up
-    set_token
-    @user = User.new(user_params)
-
-    if @user.save
-      @user.update_columns access_token: @token
-      render json: set_response(201), status: 201
+    if user_exists?
+      render json: { status: 401, errors: [ { details: 'Email already taken' } ] }, status: 401
     else
-      render json: { status: 401, message: 'Account not created' }, status: 401
+      @user = User.create(user_params)
+      generate_token user_params[:email], user_params[:password]
+      @user.access_token = @token
+      if @user.save
+        render json: @user, status: 201
+      else
+        render json: @user.errors, status: 422
+      end
     end
   end
 
+  def sign_out
+    generate_token @current_user.email, @current_user.password
+
+    @user = User.find_by_email(@current_user.email)
+    @user.access_token = @token
+    
+    if @user.save
+      render json: {message: "Sign out successfully"}, status: 200
+    else
+      render json: @user.errors, status: 422
+    end
+  end
+
+  protected
+
+  def authenticate_user_by_token
+    @current_user ||= Authentication::TokenValidator.new(
+      request.headers["Authorization"]
+    ).execute
+    unless current_user && (request.headers["Authorization"] == @current_user.access_token)
+      render json: { status: 401, errors: [ { detail: 'Access Denied.'}] }, status: 401
+    end
+  end
+
+  def get_token
+    @token ||= Authentication::Login.new(u_params[:email], u_params[:password]).execute
+  end
+  
+  def generate_token email, password
+    @token ||= Authentication::Login.new(email, password).generate_json_web_token
+  end  
+
   private
-  def set_response(status)
-    response = {
-      status: status,
-      message: {
-        user: {
-          id: @user.id,
-          first_name: @user.first_name,
-          last_name: @user.last_name,
-          email: @user.email,
-          access_token: @user.access_token
-        }
-      }
-    }
+
+  def user_exists?
+    User.exists?(email: user_params[:email])
+  end
+
+  def user_params
+		params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest)
   end
 end

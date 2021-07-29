@@ -11,22 +11,23 @@ module Authentication
 
     def execute
       return false unless valid_user?
-      generate_json_web_token
+      @user.access_token
+    end
+
+    def generate_json_web_token
+      return false unless user
+      JsonWebTokens::Encode.new(user_params).execute
     end
 
     private
 
     def user
-      user ||= User.where(email: @email).first
+      @user ||= User.find_by_email(email)
     end
 
     def valid_user?
       return false unless user
-      user.authenticate(password)
-    end
-
-    def generate_json_web_token
-      JsonWebTokens::Encode.new(user_params).execute if user
+      @user.authenticate(password)
     end
 
     def user_params
