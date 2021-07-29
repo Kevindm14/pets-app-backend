@@ -6,7 +6,7 @@ RSpec.describe 'Authentication API', type: :request do
         {
             first_name: user.first_name,
             email: user.email,
-            password: user.password
+            password_digest: user.password_digest
         }
     end
 
@@ -20,9 +20,9 @@ RSpec.describe 'Authentication API', type: :request do
             end
 
             it 'returns token' do
-                expect(json['first_name']).not_to be_empty
+                expect(json['email']).not_to be_empty
                 expect(json['access_token']).not_to be_nil
-                expect(json.size).to eq(14)
+                expect(json.size).to eq(13)
             end
         end
     end
