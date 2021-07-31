@@ -1,3 +1,8 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  resources :pets, only: [:index]
+
+  post 'users/sign_up', to: 'users#sign_up'
+  post 'users/sign_in', to: 'users#sign_in'
+  get 'users/sign_out', to: 'users#sign_out'
+  get 'users/profile', to: 'users#profile'
 end
