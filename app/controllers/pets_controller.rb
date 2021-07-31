@@ -1,8 +1,8 @@
 class PetsController < ApplicationController
-    
+    before_action :authenticate_user_by_token
     # GET /PETS
     def index
         @pets = Pet.all
-        json_response(@pets)
+        render json: @pets, status: 200
     end
 end

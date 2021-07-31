@@ -6,12 +6,8 @@ ruby '3.0.0'
 gem 'rails', '~> 6.1.4'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 5.0'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-# gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
-# Use Active Model has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
@@ -20,13 +16,10 @@ gem 'puma', '~> 5.0'
 gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'jwt'
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors', '~> 1.1', '>= 1.1.1'
-gem 'simple_command', '~> 0.1.0'
 gem 'rexml', '~> 3.2', '>= 3.2.5'
 gem 'bcrypt', '~> 3.1', '>= 3.1.16'
-gem 'rubocop', '~> 1.18', require: false
-gem 'rubocop-rails', require: false
+
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -36,7 +29,8 @@ end
 
 group :development do
   gem 'listen', '~> 3.3'
-  gem 'spring'
+  gem 'spring', '~> 2.1', '>= 2.1.1'
+  gem 'rubocop', '~> 1.18', '>= 1.18.4'
 end
 
 group :test do
