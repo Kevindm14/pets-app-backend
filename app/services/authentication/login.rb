@@ -32,9 +32,9 @@ module Authentication
 
     def user_params
       {
-        user_id: user.id,
-        first_name: user.first_name,
-        email: user.email
+        user_id: @user.id,
+        first_name: @user.first_name,
+        email: @user.email
       }
     end
   end
