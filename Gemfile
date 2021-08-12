@@ -11,6 +11,8 @@ gem 'puma', '~> 5.0'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
+gem 'carrierwave', '~> 0.11.2'
+gem 'mimemagic', '~> 0.4.3'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false

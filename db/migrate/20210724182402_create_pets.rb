@@ -13,6 +13,7 @@ class CreatePets < ActiveRecord::Migration[6.1]
       t.string :country
       t.string :province
       t.string :contact_phone
+      t.string :status
 
       t.timestamps
     end

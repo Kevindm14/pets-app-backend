@@ -17,7 +17,7 @@ class UsersController < ApplicationController
     else
       @user = User.create(u_params)
       generate_token u_params[:email], u_params[:password]
-      @user.update_column :access_token, @token
+      @user.update_attribute :access_token, @token
 
       if @user.save
         render json: @user, status: 201
@@ -39,7 +39,21 @@ class UsersController < ApplicationController
   end
 
   def profile
-    render json: @current_user, status: 200
+    hash = {
+      id: @current_user.id,
+      first_name: @current_user.first_name,
+      last_name: @current_user.last_name,
+      email: @current_user.email,
+      access_token: @current_user.access_token,
+      gender: @current_user.gender,
+      country: @current_user.country,
+      province: @current_user.province,
+      age: @current_user.age,
+      day_of_birth: @current_user.day_of_birth,
+      total_pets: @current_user.pets.count
+    }
+
+    render json: hash, status: 200
   end
 
   private
@@ -49,7 +63,7 @@ class UsersController < ApplicationController
   end
 
   def u_params
-    params.require(:user).permit(:email, :password, :first_name, :last_name, :age, :country)
+    params.require(:user).permit(:email, :password, :first_name, :last_name, :age, :country, :province, :password_digest)
   end
 
   protected
