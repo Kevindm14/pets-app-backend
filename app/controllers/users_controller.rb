@@ -27,6 +27,20 @@ class UsersController < ApplicationController
     end
   end
 
+  def update
+    @user = User.find(params[:id])
+    @user.update(user_params)
+    generate_token u_params[:email], u_params[:password]
+    @user.update_attribute :access_token, @token
+
+    
+    if @user.persisted?
+      render json: @user, status: 201
+    else
+      render json: @user.errors, status: 422
+    end
+  end
+
   def sign_out
     generate_token @current_user.email, @current_user.password
     @user = User.find_by_email(@current_user.email)
@@ -41,12 +55,12 @@ class UsersController < ApplicationController
   def profile
     hash = {
       id: @current_user.id,
-      first_name: @current_user.first_name,
-      last_name: @current_user.last_name,
+      first_name: @current_user.first_name.humanize,
+      last_name: @current_user.last_name.humanize,
       email: @current_user.email,
       access_token: @current_user.access_token,
       gender: @current_user.gender,
-      country: @current_user.country,
+      country: @current_user.country.humanize,
       province: @current_user.province,
       age: @current_user.age,
       day_of_birth: @current_user.day_of_birth,
@@ -64,6 +78,10 @@ class UsersController < ApplicationController
 
   def u_params
     params.require(:user).permit(:email, :password, :first_name, :last_name, :age, :country, :province, :password_digest)
+  end
+
+  def user_params
+    params.require(:user).permit(:email, :password, :first_name, :last_name, :age, :country, :province, :gender, :password_digest)
   end
 
   protected
